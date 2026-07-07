@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'services/isar_database_service.dart';
+  
 import 'view/splash/splash_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // TO INITIALIZE ISAR DATABASE
+  await IsarDatabaseService().isar; 
   runApp(const MenuAssistantApp());
 }
 

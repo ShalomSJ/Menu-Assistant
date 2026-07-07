@@ -134,7 +134,7 @@ Coming Soon
 Clone the repository:
 
 ```bash
-git clone https://github.com/yourusername/menu-assistant.git
+git clone https://github.com/ShalomSJ/Menu-Assistant.git
 ```
 
 Install dependencies:
