@@ -4,6 +4,7 @@ import 'package:isar/isar.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '/services/isar_database_service.dart';
 import '../model/profile.dart';
+import '../controller/profile_controller.dart';
 
 enum AppNavigationTarget {
   splashScreen,
@@ -13,11 +14,14 @@ enum AppNavigationTarget {
   editProfileScreen,
 }
 
-class ScannerController extends ChangeNotifier {
+class SplashScreenController extends ChangeNotifier {
+  final ProfileController profileController = ProfileController();
+
   AppNavigationTarget _navigationTarget = AppNavigationTarget.splashScreen;
   Timer? _splashTimer;
 
   AppNavigationTarget get navigationTarget => _navigationTarget;
+
 
   // TO START THE APP INITIALIZATION PROCESS
   void initializeApp() {
@@ -30,7 +34,7 @@ class ScannerController extends ChangeNotifier {
     });
   }
 
-  // TO EVALUATE 
+  // TO EVALUATE NEXT SCREEN
   Future<void> _determineNextScreen() async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -43,7 +47,7 @@ class ScannerController extends ChangeNotifier {
         _navigationTarget = AppNavigationTarget.disclaimerScreen;
       }
 
-      String lastActivity = prefs.getString('last_activity') ?? '';
+      final String lastActivity = prefs.getString('last_activity') ?? '';
 
       final isar = await IsarDatabaseService().isar;
       final allProfiles = await isar.profiles.where().findAll();
@@ -63,14 +67,16 @@ class ScannerController extends ChangeNotifier {
     } catch (e) {
       // TO FALLBACK SAFE ROUTING TO CREATE PROFILE SCREEN IN CASE OF ANY ERROR
       _navigationTarget = AppNavigationTarget.createProfileScreen;
+    }
+
+    notifyListeners();
   }
 
-  notifyListeners();
-  }
 
   @override
   void dispose() {
     _splashTimer?.cancel();
+    profileController.dispose();
     super.dispose();
   }
 }

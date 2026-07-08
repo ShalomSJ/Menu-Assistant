@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../controller/disclaimer_controller.dart';
+import '../../controller/profile_controller.dart';
 import '../profiles/profile_list_screen.dart';
 import '../profiles/create_profile_screen.dart';
 
@@ -13,6 +14,7 @@ class DisclaimerScreen extends StatefulWidget {
 class _DisclaimerScreenState extends State<DisclaimerScreen> {
 
   final DisclaimerController _disclaimerController = DisclaimerController();
+  final ProfileController _profileController = ProfileController();
 
   @override
   void initState() {
@@ -24,6 +26,7 @@ class _DisclaimerScreenState extends State<DisclaimerScreen> {
   void dispose() {
     _disclaimerController.removeListener(_onControllerStateChanged);
     _disclaimerController.dispose();
+    _profileController.dispose();
     super.dispose();
   }
 
@@ -34,11 +37,11 @@ class _DisclaimerScreenState extends State<DisclaimerScreen> {
 
     if (target == DisclaimerNavigationTarget.profileListScreen) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const ProfileListScreen()),
+        MaterialPageRoute(builder: (context) => ProfileListScreen(profileController: _profileController)),
       );
     } else if (target == DisclaimerNavigationTarget.createProfileScreen) {
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const CreateProfileScreen()),
+        MaterialPageRoute(builder: (context) => CreateProfileScreen(profileController: _profileController)),
       );
     }
   }

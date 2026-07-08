@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:isar/isar.dart';
+
 import '/services/isar_database_service.dart';
 import '../profiles/profile_list_screen.dart';
 import '../../model/profile.dart';
 import '../../model/food_allergy.dart';
+import '../../controller/profile_controller.dart';
 import 'create_profile_screen.dart';
 
 class EditProfileScreen extends StatefulWidget {
@@ -30,7 +31,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         if (!mounted) return;
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const CreateProfileScreen()),
+          MaterialPageRoute(
+            builder: (context) => CreateProfileScreen(
+              profileController: ProfileController(),
+            ),
+          ),
         );
       });
     }
@@ -59,7 +64,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     if (!mounted) return;
     Navigator.of(context).pushReplacement(
-      MaterialPageRoute(builder: (context) => ProfileListScreen()),
+      MaterialPageRoute(
+        builder: (context) => ProfileListScreen(
+          profileController: ProfileController(),
+        ),
+      ),
     );
   }
 
