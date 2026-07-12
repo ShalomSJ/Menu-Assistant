@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../controller/profile_controller.dart';
 import '../profiles/create_profile_screen.dart';
+import '../scanner/scanner_screen.dart';
 
 class ProfileListScreen extends StatefulWidget {
   final ProfileController profileController;
@@ -76,8 +77,14 @@ class _ProfileListScreenState extends State<ProfileListScreen> {
                       ),
                   trailing: const Icon(Icons.arrow_forward_ios_rounded),
                   onTap: () {
-                    // Handle profile selection
-},
+                    // TO HANDLE PROFILE SELECTION
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ScannerScreen(selectedProfile: profile),
+                      ),
+                    );
+                  },
                 ),
               );
             },

@@ -66,5 +66,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>This application requires active camera permissions to parse physical restaurant menu items for allergens.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>This application requires gallery database reading access to parse menu screenshots.</string>
 </dict>
 </plist>
