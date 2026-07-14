@@ -94,10 +94,10 @@ This project was created to strengthen my understanding of:
 * ✅ System Architecture
 * ✅ MVC Structure
 * ✅ Splash Screen
-* 👩🏽‍💻 User Profiles
-* ⬜ OCR Engine
-* ⬜ Menu Analysis
-* ⬜ Risk Overlay
+* ✅ User Profiles
+* ✅ OCR Engine
+* ✅ Menu Analysis
+* 👩🏽‍💻 Risk Overlay
 * ⬜ Local Database
 * ⬜ Testing
 
@@ -110,6 +110,7 @@ lib/
 ├── controller/
 ├── model/
 ├── services/
+├── utils/
 ├── view/
 │   ├── splash/
 │   ├── disclaimer/

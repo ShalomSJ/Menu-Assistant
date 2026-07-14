@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:menu_assistant/view/results/results_screen.dart';
 import 'package:menu_assistant/view/scanner/qr_scanner_overlay.dart';
 import '../../controller/scanner_controller.dart';
 import '../../model/profile.dart';
@@ -13,16 +14,24 @@ class ScannerScreen extends StatefulWidget {
 }
 
 class _ScannerScreenState extends State<ScannerScreen>{
-  late ScannerController _controller;
+  late ScannerController _scannerController;  
 
   @override
   void initState(){
     super.initState();
-
-    _controller = ScannerController(activeProfile: widget.selectedProfile);
+    _scannerController = ScannerController(activeProfile: widget.selectedProfile);
   }
 
-  void _handleFileResult(dynamic result, String inputType) {
+  /// Processes the captures file and navigates to the Results Screen
+  Future<void> _handleFileProcessing(dynamic file) async {
+    if (file != null) {
+      // TO RUN THE ML KIT PROCESSING LOOP
+      await _scannerController.processImageFile(file);
+      _navigateToResults();
+    }
+  }
+
+  Future<void> _handleFileResult(dynamic result, String inputType) async {
     if (result != null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
@@ -32,9 +41,25 @@ class _ScannerScreenState extends State<ScannerScreen>{
       );
 
       // NEXT MILESTONE ROADMAP TARGET: Pass this file/URL directly to our ML Kit processing screen!
-
+      if (result is String) {
+        await _scannerController.processTextOrUrl(result);
+        _navigateToResults();
+      }
     }
   }
+
+  /// Helper method to route to the results dashboard
+  void _navigateToResults() {
+    if (mounted) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder:(context) => ResultsScreen(risks: _scannerController.detectedRisks),
+        ),
+      );
+    }
+  }
+
   
   @override
   Widget build(BuildContext context) {
@@ -44,16 +69,16 @@ class _ScannerScreenState extends State<ScannerScreen>{
         backgroundColor: Theme.of(context).colorScheme.primary,
       ),
       body: ListenableBuilder(
-        listenable: _controller, 
+        listenable: _scannerController, 
         builder: (context, _) {
-          if (_controller.isProcessing) {
+          if (_scannerController.isProcessing) {
             return const Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   CircularProgressIndicator(),
                   SizedBox(height: 16),
-                  Text("Preparing viewport file..."),
+                  Text("Analysing Menu ..."),
                 ],
               ),
             );
@@ -133,8 +158,8 @@ class _ScannerScreenState extends State<ScannerScreen>{
                 // THE ACTION OPERATIONS LAYER
                 ElevatedButton.icon(
                   onPressed: () async {
-                    final file = await _controller.takePhoto();
-                    _handleFileResult(file, "Camera Photo");
+                    final file = await _scannerController.takePhoto();
+                    await _handleFileProcessing(file);
                   },
                   icon: const Icon(Icons.camera_alt_rounded),
                   label: const Text("Take Photo"),
@@ -145,8 +170,8 @@ class _ScannerScreenState extends State<ScannerScreen>{
 
                 ElevatedButton.icon(
                   onPressed: () async {
-                    final file = await _controller.uploadImage();
-                    _handleFileResult(file, "Upload Image");
+                    final file = await _scannerController.uploadImage();
+                    await _handleFileProcessing(file);
                   },
                   icon: const Icon(Icons.image_rounded),
                   label: const Text("Upload Image"),
@@ -157,8 +182,8 @@ class _ScannerScreenState extends State<ScannerScreen>{
 
                 ElevatedButton.icon(
                   onPressed: () async {
-                    final file = await _controller.uploadPDF();
-                    _handleFileResult(file, "Upload PDF");
+                    final file = await _scannerController.uploadPDF();
+                    await _handleFileProcessing(file);
                   },
                   icon: const Icon(Icons.picture_as_pdf_rounded),
                   label: const Text("Upload PDF Document"),
@@ -173,9 +198,8 @@ class _ScannerScreenState extends State<ScannerScreen>{
                       context,
                       MaterialPageRoute(builder: (context) => const QrScannerOverlay()),
                     );
-
                     if (scannedLink != null) {
-                      final confirmedCode = await _controller.handleQrResult(scannedLink);
+                      final confirmedCode = await _scannerController.handleQrResult(scannedLink);
                       _handleFileResult(confirmedCode, "QR Menu URL");
                     }
                   },
